@@ -9,29 +9,14 @@ const useFlip  = (initialState = true) => {
     return [flipped, toggleFlipped]
 }
 
-function useAxios (url) {
-    const [response, setResponse] = useState([]);
+function useAxios (baseUrl) {
+    const [responses, setResponses] = useState([]);
 
-    useEffect(() => {
-        async function getData() {
-            try{
-            const response = await axios.get(url);
-            const card = response.data.cards[0];
-
-            setResponse(c => [
-                ...c,
-                {
-                    id: card.code,
-                    image: card.image
-                }
-            ])
-        } catch(e) {
-            console.log(e)
-            }
-        }
-        getData()
-    }, []);
-    return [response, setResponse]
+    const addResponseData = async (formatter = data => data, urlEnd="") => {
+        const response = await axios.get(`${baseUrl}${urlEnd}`);
+        setResponses(data => [...data, formatter(response.data)]);
+    };
+    return [responses, addResponseData];
 }
 
 
